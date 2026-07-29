@@ -23,12 +23,12 @@ spec:
 
     # 2. Git repo as the values source ($values ref used above)
     - repoURL: https://github.com/DPP-2026/zen-gitops.git
-      targetRevision: HEAD
+      targetRevision: feature/fluent-bit-logging
       ref: values
 
     # 3. Raw manifests: EBS CSI StorageClass
     - repoURL: https://github.com/DPP-2026/zen-gitops.git
-      targetRevision: HEAD
+      targetRevision: feature/fluent-bit-logging
       path: observability_project4/k8s
 
   destination:
