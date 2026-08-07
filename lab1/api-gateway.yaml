@@ -127,8 +127,13 @@ metadata:
   labels:
     app: api-gateway
     env: dev
+  annotations:
+    alb.ingress.kubernetes.io/scheme: internet-facing
+    alb.ingress.kubernetes.io/target-type: ip
+    alb.ingress.kubernetes.io/group.name: pharma-dev-lab1
+    alb.ingress.kubernetes.io/group.order: "10"
 spec:
-  ingressClassName: nginx
+  ingressClassName: alb
   rules:
     - http:
         paths:

@@ -10,7 +10,7 @@ service:
   targetPort: 3000
 ingress:
   enabled: false
-  className: nginx
+  className: alb
   host: dev.pharma.internal
   path: /notifications
   pathType: Prefix

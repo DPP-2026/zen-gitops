@@ -10,7 +10,7 @@ service:
   targetPort: 8081
 ingress:
   enabled: false
-  className: nginx
+  className: alb
   host: qa.pharma.internal
   path: /auth
   pathType: Prefix

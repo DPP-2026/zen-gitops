@@ -10,7 +10,7 @@ service:
   targetPort: 8085
 ingress:
   enabled: false
-  className: nginx
+  className: alb
   host: dev.pharma.internal
   path: /manufacturing
   pathType: Prefix

@@ -1,3 +1,44 @@
+# Two Ingress objects sharing one ALB (Argo CD's documented "Option 2" for
+# AWS ALB: https://argo-cd.readthedocs.io/en/stable/operator-manual/ingress/).
+# ALB cannot do the raw TLS passthrough nginx used to multiplex gRPC (CLI)
+# and HTTPS (UI) on argocd-server's single port, so gRPC requests are split
+# out by Content-Type header into their own higher-priority rule.
+#
+# TLS is not terminated at the ALB yet (no ACM certificate ARN is available
+# for argocd.pharma.internal) — the ALB listens on plain HTTP:80 and
+# re-encrypts to argocd-server over HTTPS:443. Once an ACM cert exists, add
+# alb.ingress.kubernetes.io/certificate-arn to both Ingresses to switch the
+# listener to HTTPS.
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: argocd-server-grpc-ingress
+  namespace: argocd
+  labels:
+    managed-by: terraform
+  annotations:
+    alb.ingress.kubernetes.io/scheme: internet-facing
+    alb.ingress.kubernetes.io/target-type: ip
+    alb.ingress.kubernetes.io/backend-protocol: HTTPS
+    alb.ingress.kubernetes.io/backend-protocol-version: GRPC
+    alb.ingress.kubernetes.io/group.name: argocd
+    alb.ingress.kubernetes.io/group.order: "10"
+    alb.ingress.kubernetes.io/conditions.argocd-server: >
+      [{"field":"http-header","httpHeaderConfig":{"httpHeaderName":"Content-Type","values":["application/grpc"]}}]
+spec:
+  ingressClassName: alb
+  rules:
+    - host: argocd.pharma.internal
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: argocd-server
+                port:
+                  number: 443
+---
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
@@ -6,16 +47,13 @@ metadata:
   labels:
     managed-by: terraform
   annotations:
-    nginx.ingress.kubernetes.io/ssl-passthrough: "true"
-    nginx.ingress.kubernetes.io/backend-protocol: "HTTPS"
-    nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
-    cert-manager.io/cluster-issuer: "letsencrypt-prod"
+    alb.ingress.kubernetes.io/scheme: internet-facing
+    alb.ingress.kubernetes.io/target-type: ip
+    alb.ingress.kubernetes.io/backend-protocol: HTTPS
+    alb.ingress.kubernetes.io/group.name: argocd
+    alb.ingress.kubernetes.io/group.order: "20"
 spec:
-  ingressClassName: nginx
-  tls:
-    - hosts:
-        - argocd.pharma.internal
-      secretName: argocd-tls
+  ingressClassName: alb
   rules:
     - host: argocd.pharma.internal
       http:

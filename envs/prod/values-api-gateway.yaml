@@ -12,7 +12,10 @@ service:
 
 ingress:
   enabled: true
-  className: nginx
+  className: alb
+  annotations:
+    alb.ingress.kubernetes.io/group.name: pharma-prod
+    alb.ingress.kubernetes.io/group.order: "10"
   host: a0ffda4d239d941549d518de18c19f6f-cf2f70374c2e5a74.elb.us-east-1.amazonaws.com
   path: /api
   pathType: Prefix

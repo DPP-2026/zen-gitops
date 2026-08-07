@@ -7,9 +7,12 @@ metadata:
     app: pharma-ui
     env: dev
   annotations:
-    nginx.ingress.kubernetes.io/ssl-redirect: "false"
+    alb.ingress.kubernetes.io/scheme: internet-facing
+    alb.ingress.kubernetes.io/target-type: ip
+    alb.ingress.kubernetes.io/group.name: pharma-dev-raw
+    alb.ingress.kubernetes.io/group.order: "20"
 spec:
-  ingressClassName: nginx
+  ingressClassName: alb
   rules:
     - http:
         paths:

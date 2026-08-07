@@ -10,10 +10,10 @@ service:
   targetPort: 80
 ingress:
   enabled: true
-  className: nginx
+  className: alb
   annotations:
-    # Set to "true" when TLS certificate is configured
-    nginx.ingress.kubernetes.io/ssl-redirect: "false"
+    alb.ingress.kubernetes.io/group.name: pharma-dev
+    alb.ingress.kubernetes.io/group.order: "20"
   host: ""
   path: /
   pathType: Prefix

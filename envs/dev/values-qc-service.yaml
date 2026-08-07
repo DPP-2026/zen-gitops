@@ -10,7 +10,7 @@ service:
   targetPort: 8086
 ingress:
   enabled: false
-  className: nginx
+  className: alb
   host: dev.pharma.internal
   path: /qc
   pathType: Prefix
