@@ -19,7 +19,7 @@ spec:
     path: helm-charts
     helm:
       valueFiles:
-        - ../envs/dev/values-pharma-ui.yaml
+        - ../envs/dev/value-pharma-ui.yaml
 
   destination:
     server: https://kubernetes.default.svc
